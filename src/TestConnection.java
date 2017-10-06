@@ -7,7 +7,5 @@ public class TestConnection {
 		//initialize conn
 		db.initializeConn();
 		System.out.println(db.getStudentNameSurname());
-
-
 	}
 }
