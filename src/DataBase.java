@@ -1,4 +1,3 @@
-import java.nio.file.attribute.UserPrincipalNotFoundException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -7,19 +6,37 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.hsqldb.rights.User;
-
+/**
+ * Public class Database which implements all methods to get information from
+ * database.
+ * 
+ * @author Lorenzo Stacchio
+ *
+ */
 public class DataBase {
+	// connection
 	private Connection conn;
+	// statement
 	private Statement statement;
+	// resul set
 	private ResultSet result;
+	// dbpath
 	private String dbPath;
+	// boolean that tell if user is logged
+	private boolean logged;
 
+	/**
+	 * Constructor that give a regulare db path to initialize connection.
+	 * 
+	 * @param dbPath
+	 *            path of database
+	 */
 	public DataBase(String dbPath) {
 		this.dbPath = dbPath;
 		this.statement = null;
 		this.conn = null;
 		this.result = null;
+		this.logged = false;
 	}
 
 	/**
@@ -27,6 +44,7 @@ public class DataBase {
 	 */
 	public void initializeConn() {
 		try {
+			// inizialize conn
 			this.conn = DriverManager.getConnection("jdbc:ucanaccess://" + this.dbPath);
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -74,37 +92,66 @@ public class DataBase {
 			// create statement
 			this.statement = this.conn.createStatement();
 			// get result of query
-			this.result = this.statement.executeQuery("SELECT * FROM Studenti\n" + "WHERE Studenti.userName ='" + userName
-					+ "' and Studenti.password='" + password+"'");
+			this.result = this.statement.executeQuery("SELECT * FROM Studenti\n" + "WHERE Studenti.userName ='"
+					+ userName + "' and Studenti.password='" + password + "'");
 			// take all the results and put in list
 			while (this.result.next()) {
 				// get string work with columns not raws
+				studentData.add(this.result.getString(1));
 				studentData.add(this.result.getString(2));
 				studentData.add(this.result.getString(3));
 			}
 		} catch (SQLException e) {
+			// print exception
 			e.printStackTrace();
 		}
-		//if list is empty user doesn't exist
+		// if list is empty user doesn't exist
 		if (studentData.size() == 0) {
 			throw new IllegalArgumentException("User inesistente");
-		} else
+		} else {
+			// if i'm here, log action was succesfull
+			this.logged = true;
 			return studentData;
+		}
 	}
-	
-	public void nome() {
+
+	/**
+	 * Method that return students marks
+	 * 
+	 * @return list of student's marks
+	 */
+	public List<String> returnStudentMarks(int idStudente) {
+		//control if user is logged
+		if(this.logged==false) {
+			throw new IllegalArgumentException("Utente non loggato!");
+		}
+		// declare and initialize list
+		List<String> studentMarks = new ArrayList<String>();
 		try {
 			// create statement
-			this.statement = this.conn.createStatement();
+			//this.statement = this.conn.createStatement();
 			// get result of query
-			this.result = this.statement.executeQuery("SELECT * FROM Studenti WHERE Studenti.nome = ");
+			this.result = this.statement.executeQuery("SELECT "
+					+ "Materia.nome_materia, EsamePassato.dataEsame, EsamePassato.Voto "
+					+ "FROM Studenti, Materia, EsamePassato "
+					+ "WHERE EsamePassato.id_studente=" + idStudente +" and Materia.id_Materia=EsamePassato.id_materia");
 			// take all the results and put in list
 			while (this.result.next()) {
 				// get string work with columns not raws
-				System.out.println(this.result.getString(2) + " " + this.result.getString(3));
+				studentMarks.add(this.result.getString(0));
+				studentMarks.add(this.result.getString(2));
+				studentMarks.add(this.result.getString(3));
 			}
 		} catch (SQLException e) {
+			// print exception
 			e.printStackTrace();
 		}
+		// if list is empty user doesn't exist
+		if (studentMarks.size() == 0) {
+			throw new IllegalArgumentException("Lo user non ha nessun voto");
+		} else {
+			return studentMarks;
+		}
 	}
+
 }
