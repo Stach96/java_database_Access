@@ -134,11 +134,12 @@ public class DataBase {
 			this.result = this.statement.executeQuery("SELECT "
 					+ "Materia.nome_materia, EsamePassato.dataEsame, EsamePassato.Voto "
 					+ "FROM Studenti, Materia, EsamePassato "
-					+ "WHERE EsamePassato.id_studente=" + idStudente +" and Materia.id_Materia=EsamePassato.id_materia");
+					+ "WHERE EsamePassato.id_studente=" + idStudente +" and EsamePassato.id_studente=Studenti.id and "
+							+ "Materia.id_Materia=EsamePassato.id_materia");
 			// take all the results and put in list
 			while (this.result.next()) {
 				// get string work with columns not raws
-				studentMarks.add(this.result.getString(0));
+				studentMarks.add(this.result.getString(1));
 				studentMarks.add(this.result.getString(2));
 				studentMarks.add(this.result.getString(3));
 			}
