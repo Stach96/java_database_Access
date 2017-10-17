@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Dictionary;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -17,8 +18,8 @@ public class Student {
 	private String surname;
 	// db
 	private DataBase db;
-	// dictionary for exams
-	private Dictionary<String, Integer> Esami;
+	//private array fo marks
+	private List<Esame_Passato> marks;
 
 	/**
 	 * Empty Constructor, it is the only constructor for student because for the
@@ -38,6 +39,7 @@ public class Student {
 		this.id = Integer.parseInt(studentData.get(0));
 		this.name = studentData.get(1);
 		this.surname = studentData.get(2);
+		this.marks = this.getStudentMarks();
 	}
 
 	/**
@@ -54,7 +56,7 @@ public class Student {
 	 * 
 	 * @return student marks
 	 */
-	public String getStudentMarks() {
+	public List<Esame_Passato> getStudentMarks() {
 		// at this point student exist
 		List<String> studentMarks = new ArrayList<String>();
 		try {
@@ -62,12 +64,23 @@ public class Student {
 		} catch (NullPointerException e) {
 			System.out.println("student mark is null");
 		}
-		// string to return
-		String prova = "";
-		for (String x : studentMarks) {
-			prova += x +"\n";
+		// array to return
+		List<Esame_Passato> esamiDaRestituire= new ArrayList<Esame_Passato>();
+		//Create an iterator
+		Iterator<String> marksIterator=studentMarks.iterator();
+		while(marksIterator.hasNext()) {
+			//name
+			String name= marksIterator.next();
+			//cfu
+			int cfu = Integer.parseInt(marksIterator.next());
+			//Date
+			String date = marksIterator.next();
+			//cfu
+			int mark = Integer.parseInt(marksIterator.next());
+			//assign name, cfu,date, mark
+			esamiDaRestituire.add(new Esame_Passato(name,cfu,date,mark));
 		}
-		return prova;
+		return esamiDaRestituire ;
 	}
 
 }

@@ -132,7 +132,7 @@ public class DataBase {
 			//this.statement = this.conn.createStatement();
 			// get result of query
 			this.result = this.statement.executeQuery("SELECT "
-					+ "Materia.nome_materia, EsamePassato.dataEsame, EsamePassato.Voto "
+					+ "Materia.nome_materia, Materia.Cfu, EsamePassato.dataEsame, EsamePassato.Voto "
 					+ "FROM Studenti, Materia, EsamePassato "
 					+ "WHERE EsamePassato.id_studente=" + idStudente +" and EsamePassato.id_studente=Studenti.id and "
 							+ "Materia.id_Materia=EsamePassato.id_materia");
@@ -142,6 +142,8 @@ public class DataBase {
 				studentMarks.add(this.result.getString(1));
 				studentMarks.add(this.result.getString(2));
 				studentMarks.add(this.result.getString(3));
+				studentMarks.add(this.result.getString(4));
+
 			}
 		} catch (SQLException e) {
 			// print exception
